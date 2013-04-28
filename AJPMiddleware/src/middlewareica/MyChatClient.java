@@ -1,14 +1,33 @@
 package middlewareica;
 
 /**
- * MyChatClient is responsible for clients
+ * <p> MyChatClient.java creating clients concurrently.</p>
  *
- * @author Anastasov
+ * <p>This program is part of the solution for the second ICA for AJP in Teesside
+ * University.</p>
+ *
+ * <p>AJP middleware 2013-SOLUTION is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.</p>
+ *
+ * <p>This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.</p>
+ *
+ * <p>You should have received a copy of the GNU General Public License along
+ * with this program. If not, see http://www.gnu.org/licenses/.</p>
+ *
+ * <p>Copyright Kiril Anastasov L1087591@live.tees.ac.uk 10-April-2013 </p>
+ * <p>Copyright Chris Wills L1115768@live.tees.ac.uk </p>
+ * <p>Copyright Sean Temple L1065759@live.tees.ac.uk </p>
  */
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
 import javax.swing.*;
 
@@ -41,6 +60,7 @@ public class MyChatClient extends JFrame
      */
     private DataInputStream din;
 
+    private String IPAddress;
     /**
      * ButtonListener is responsible for the action of the buttons and the
      * keyboards
@@ -101,7 +121,7 @@ public class MyChatClient extends JFrame
      */
     public MyChatClient() {
         jtfSendText = new JTextField();
-        jtfName = new JTextField("Enter a name");
+        jtfName = new JTextField("Client");
         jta = new JTextArea();
         JPanel p1 = new JPanel();
         p1.setLayout(new BorderLayout());
@@ -130,7 +150,8 @@ public class MyChatClient extends JFrame
         try {
 //            opens a socket that the client can communicate with the server.
 //            server name is the server's host name of IP.
-            socket = new Socket("localhost", 8000);
+            IPAddress = "127.0.0.1";
+            socket = new Socket(IPAddress, 8000);
 
 //            with IP
 //            socket = new Socket("130.254.204.36", 8000);
@@ -138,10 +159,16 @@ public class MyChatClient extends JFrame
 //             socket = new Socket("http://www.scm.tees.ac.uk/isg/website/", 8000);
 
 
+            InetAddress inetAddress = socket.getInetAddress();
+
+            System.out.println("Client's host name is "
+                    + inetAddress.getHostName());
+            System.out.println("Client's IP Address is "
+                    + inetAddress.getHostAddress());
             //after the server accepts the connection, the communication between the server and the client is the same as I/O stream.
             din = new DataInputStream(socket.getInputStream());
             dout = new DataOutputStream(socket.getOutputStream());
-            
+
             //create a new Thread for each Client to make it concurrent in order to allow multiple clients.
             (new Thread(this)).start();
         } catch (IOException ex) {
